@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: CampusDesk Student Management API
+  version: 1.0.0
+  description: REST API for administrator authentication, dashboard statistics, and student CRUD.
+servers:
+  - url: http://localhost:5000
+paths:
+  /api/health:
+    get:
+      summary: API health check
+      responses:
+        '200':
+          description: API process is responding
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+  /api/auth/register:
+    post:
+      summary: Register an administrator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        '201': { description: Account created; returns user and bearer token }
+        '400': { description: Invalid input }
+        '409': { description: Email already exists }
+  /api/auth/login:
+    post:
+      summary: Authenticate an administrator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200': { description: Signed in; returns user and bearer token }
+        '400': { description: Missing or invalid fields }
+        '401': { description: Invalid credentials }
+  /api/students/dashboard:
+    get:
+      summary: Get student summary counts
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Counts by student status }
+        '401': { description: Missing or invalid token }
+  /api/students:
+    get:
+      summary: List students owned by the current user
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - { in: query, name: page, schema: { type: integer, minimum: 1 }, description: Page number (default 1) }
+        - { in: query, name: limit, schema: { type: integer, minimum: 1, maximum: 100 }, description: Page size (default 10) }
+        - { in: query, name: search, schema: { type: string }, description: Search name, roll number, email, or course }
+        - { in: query, name: status, schema: { type: string, enum: [Active, Inactive, Graduated] } }
+      responses:
+        '200': { description: Student array and pagination metadata }
+        '401': { description: Missing or invalid token }
+    post:
+      summary: Create a student
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StudentInput' }
+      responses:
+        '201': { description: Student created }
+        '400': { description: Validation failed }
+        '409': { description: Duplicate roll number for this account }
+        '401': { description: Missing or invalid token }
+  /api/students/{id}:
+    parameters:
+      - { in: path, name: id, required: true, schema: { type: string }, description: MongoDB ObjectId }
+    get:
+      summary: Get one student
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Student details }
+        '400': { description: Invalid ID }
+        '404': { description: Student not found }
+    put:
+      summary: Replace editable student fields
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StudentInput' }
+      responses:
+        '200': { description: Student updated }
+        '400': { description: Invalid ID or input }
+        '404': { description: Student not found }
+        '409': { description: Duplicate roll number }
+    delete:
+      summary: Delete a student
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Student deleted }
+        '400': { description: Invalid ID }
+        '404': { description: Student not found }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Health:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        status: { type: string, example: ok }
+        timestamp: { type: string, format: date-time }
+    RegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name: { type: string, minLength: 2, maxLength: 80, example: Campus Administrator }
+        email: { type: string, format: email, example: admin@example.com }
+        password: { type: string, minLength: 8, maxLength: 128, example: change-this-password }
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+    StudentInput:
+      type: object
+      required: [rollNumber, firstName, lastName, email, course, year]
+      properties:
+        rollNumber: { type: string, maxLength: 30, example: STU-1001 }
+        firstName: { type: string, maxLength: 80, example: Aarav }
+        lastName: { type: string, maxLength: 80, example: Shah }
+        email: { type: string, format: email, example: aarav@example.com }
+        course: { type: string, maxLength: 120, example: Computer Applications }
+        year: { type: integer, minimum: 1, maximum: 8, example: 1 }
+        status: { type: string, enum: [Active, Inactive, Graduated], default: Active }

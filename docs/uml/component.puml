@@ -1,0 +1,29 @@
+@startuml
+skinparam componentStyle rectangle
+package "Browser" {
+  [React Application] as React
+  [React Router] as Router
+  [Axios API Client] as Axios
+  React --> Router
+  React --> Axios
+}
+package "Node.js Runtime" {
+  [Express App] as Express
+  [CORS + Helmet + Rate Limit] as Security
+  [Authentication Middleware] as Auth
+  [Auth Routes / Controller] as AuthAPI
+  [Student Routes / Controller] as StudentAPI
+  [Mongoose Models] as Models
+  [Central Error Handler] as Errors
+  Express --> Security
+  Express --> AuthAPI
+  Express --> StudentAPI
+  StudentAPI --> Auth
+  AuthAPI --> Models
+  StudentAPI --> Models
+  Express --> Errors
+}
+database "MongoDB" as Mongo
+Axios --> Express : HTTPS/JSON in deployment
+Models --> Mongo : Mongoose queries
+@enduml

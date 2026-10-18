@@ -1,0 +1,40 @@
+@startuml
+skinparam classAttributeIconSize 0
+class User {
+  +ObjectId _id
+  +String name
+  +String email
+  -String passwordHash
+  +String role
+  +Date createdAt
+  +Date updatedAt
+}
+class Student {
+  +ObjectId _id
+  +String rollNumber
+  +String firstName
+  +String lastName
+  +String email
+  +String course
+  +Number year
+  +String status
+  +ObjectId createdBy
+  +Date createdAt
+  +Date updatedAt
+}
+class AuthController {
+  +register(req, res, next)
+  +login(req, res, next)
+}
+class StudentController {
+  +listStudents(req, res, next)
+  +getStudent(req, res, next)
+  +createStudent(req, res, next)
+  +updateStudent(req, res, next)
+  +deleteStudent(req, res, next)
+  +dashboard(req, res, next)
+}
+User "1" <-- "0..*" Student : createdBy
+AuthController ..> User : authenticates
+StudentController ..> Student : CRUD
+@enduml

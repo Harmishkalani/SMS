@@ -1,0 +1,10 @@
+flowchart LR
+    U[Administrator in browser] --> FE[React + Vite frontend]
+    FE -->|Axios / JSON / Bearer JWT| API[Express REST API]
+    API --> SEC[Helmet · CORS · Rate limiting]
+    API --> AUTH[JWT authentication middleware]
+    API --> CTRL[Controllers + validation]
+    CTRL --> MODEL[Mongoose models]
+    MODEL --> DB[(MongoDB users and students)]
+    API --> DOCS[Swagger UI / OpenAPI]
+    API --> HEALTH[Health endpoint]

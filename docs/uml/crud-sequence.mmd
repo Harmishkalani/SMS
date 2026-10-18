@@ -1,0 +1,24 @@
+sequenceDiagram
+    actor Admin as Administrator
+    participant UI as React Students Page
+    participant API as Express Student API
+    participant Auth as Auth Middleware
+    participant DB as MongoDB
+    Admin->>UI: Submit student form
+    UI->>API: POST /api/students + Bearer JWT
+    API->>Auth: Verify token
+    Auth-->>API: Authenticated user ID
+    API->>API: Validate request body
+    alt invalid data
+      API-->>UI: 400 validation errors
+      UI-->>Admin: Display field/form error
+    else valid data
+      API->>DB: Insert Student with createdBy
+      DB-->>API: Saved document
+      API-->>UI: 201 created student
+      UI->>API: GET /api/students
+      API->>DB: Query records for owner
+      DB-->>API: Student list
+      API-->>UI: 200 list + pagination
+      UI-->>Admin: Render updated table
+    end

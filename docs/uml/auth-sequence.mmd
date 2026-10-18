@@ -1,0 +1,19 @@
+sequenceDiagram
+    actor Admin as Administrator
+    participant UI as React Login
+    participant API as Express Auth API
+    participant DB as MongoDB Users
+    Admin->>UI: Enter email and password
+    UI->>API: POST /api/auth/login
+    API->>DB: Find normalized email
+    DB-->>API: User + password hash
+    API->>API: bcrypt compare
+    alt credentials valid
+      API->>API: Sign JWT
+      API-->>UI: 200 user + token
+      UI->>UI: Store token in sessionStorage
+      UI-->>Admin: Navigate to dashboard
+    else credentials invalid
+      API-->>UI: 401 invalid credentials
+      UI-->>Admin: Show error message
+    end

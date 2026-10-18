@@ -1,0 +1,24 @@
+erDiagram
+    USERS ||--o{ STUDENTS : owns
+    USERS {
+      ObjectId _id PK
+      string name
+      string email UK
+      string passwordHash
+      string role
+      date createdAt
+      date updatedAt
+    }
+    STUDENTS {
+      ObjectId _id PK
+      string rollNumber
+      string firstName
+      string lastName
+      string email
+      string course
+      int year
+      string status
+      ObjectId createdBy FK
+      date createdAt
+      date updatedAt
+    }
