@@ -1,6 +1,51 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { GraduationCap, LayoutDashboard, Users, LogOut, Search } from 'lucide-react';
+import { GraduationCap, LayoutDashboard, Users, LogOut, Search, BookOpen, IndianRupee } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
-export default function Layout(){const {user,logout}=useAuth();const navigate=useNavigate();function signOut(){logout();navigate('/login')}
- return <div className="app-shell"><aside className="sidebar"><div className="brand"><span className="brand-mark"><GraduationCap size={22}/></span><span>CampusDesk<small>STUDENT PORTAL</small></span></div><div className="nav-label">WORKSPACE</div><NavLink to="/dashboard" className={({isActive})=>`nav-link ${isActive?'active':''}`}><LayoutDashboard size={18}/>Dashboard</NavLink><NavLink to="/students" className={({isActive})=>`nav-link ${isActive?'active':''}`}><Users size={18}/>Students</NavLink><div className="sidebar-bottom"><div className="user-avatar">{user?.name?.slice(0,1).toUpperCase()||'U'}</div><div className="user-meta"><strong>{user?.name}</strong><small>Administrator</small></div><button className="icon-button logout" onClick={signOut} title="Sign out" aria-label="Sign out"><LogOut size={18}/></button></div></aside><main className="main-area"><header className="topbar"><div className="mobile-brand"><GraduationCap size={20}/> CampusDesk</div><div className="topbar-search"><Search size={16}/><span>Student administration workspace</span></div><div className="topbar-user"><span className="online-dot"/> System online</div></header><div className="page-content"><Outlet/></div><footer className="footer">© {new Date().getFullYear()} CampusDesk <span>Student records made simple</span></footer></main></div>
+export default function Layout() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  function signOut() { logout(); navigate('/login'); }
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <span className="brand-mark"><GraduationCap size={22}/></span>
+          <span>CampusDesk<small>STUDENT PORTAL</small></span>
+        </div>
+        <div className="nav-label">WORKSPACE</div>
+        <NavLink to="/dashboard" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <LayoutDashboard size={18}/>Dashboard
+        </NavLink>
+        <NavLink to="/students" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <Users size={18}/>Students
+        </NavLink>
+        <div className="nav-label" style={{marginTop:'18px'}}>ACADEMICS</div>
+        <NavLink to="/courses" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <BookOpen size={18}/>Courses
+        </NavLink>
+        <NavLink to="/fees" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+          <IndianRupee size={18}/>Fee Payments
+        </NavLink>
+        <div className="sidebar-bottom">
+          <div className="user-avatar">{user?.name?.slice(0,1).toUpperCase() || 'U'}</div>
+          <div className="user-meta">
+            <strong>{user?.name}</strong>
+            <small>Administrator</small>
+          </div>
+          <button className="icon-button logout" onClick={signOut} title="Sign out" aria-label="Sign out">
+            <LogOut size={18}/>
+          </button>
+        </div>
+      </aside>
+      <main className="main-area">
+        <header className="topbar">
+          <div className="mobile-brand"><GraduationCap size={20}/> CampusDesk</div>
+          <div className="topbar-search"><Search size={16}/><span>Student administration workspace</span></div>
+          <div className="topbar-user"><span className="online-dot"/> System online</div>
+        </header>
+        <div className="page-content"><Outlet/></div>
+        <footer className="footer">© {new Date().getFullYear()} CampusDesk <span>Student records made simple</span></footer>
+      </main>
+    </div>
+  );
 }

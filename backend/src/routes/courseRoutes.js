@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js';
+import { listCourses, createCourse, updateCourse, deleteCourse } from '../controllers/courseController.js';
+const router = Router();
+router.use(requireAuth);
+router.get('/',        listCourses);
+router.post('/',       createCourse);
+router.put('/:id',     updateCourse);
+router.delete('/:id',  deleteCourse);
+export default router;

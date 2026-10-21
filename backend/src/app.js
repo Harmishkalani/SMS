@@ -9,6 +9,8 @@ import YAML from 'yaml';
 import swaggerUi from 'swagger-ui-express';
 import authRoutes from './routes/authRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
+import courseRoutes from './routes/courseRoutes.js';
+import feeRoutes from './routes/feeRoutes.js';
 import { errorHandler, notFound } from './middleware/errors.js';
 const app = express();
 const allowedOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
@@ -19,6 +21,8 @@ app.use(rateLimit({ windowMs:15*60*1000, limit:300, standardHeaders:'draft-7', l
 app.get('/api/health', (req,res) => res.json({success:true,status:'ok',timestamp:new Date().toISOString()}));
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
+app.use('/api/courses', courseRoutes);
+app.use('/api/fees', feeRoutes);
 const here = path.dirname(fileURLToPath(import.meta.url));
 const specPath = path.resolve(here, '../../docs/openapi.yaml');
 if (fs.existsSync(specPath)) app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(YAML.parse(fs.readFileSync(specPath,'utf8'))));

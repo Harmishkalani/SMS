@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { requireAuth } from '../middleware/auth.js';
+import { listPayments, createPayment, getPayment, searchStudentsForFee } from '../controllers/feeController.js';
+const router = Router();
+router.use(requireAuth);
+router.get('/search-students', searchStudentsForFee);
+router.get('/',       listPayments);
+router.post('/',      createPayment);
+router.get('/:id',    getPayment);
+export default router;
